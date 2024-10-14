@@ -4,6 +4,21 @@ import os
 import plotly.express as px
 
 
+# Define acceptable ranges for water quality parameters
+ACCEPTABLE_RANGES = {
+    'ph': (6.5, 8.5),  # Ideal pH range for most aquatic life
+    'do_mg_l': (5.0, float('inf')),  # Minimum DO level is 5 mg/L
+    'temp': (0.0, 30.0)  # Acceptable temperature range, may vary
+}
+
+# Define improvement tips for out-of-range values
+IMPROVEMENT_TIPS = {
+    'ph': "Ensure proper waste disposal to prevent industrial runoff or chemicals affecting water pH.",
+    'do_mg_l': "Increase aeration in water bodies by improving water flow or using aeration devices.",
+    'temp': "Plant trees around water bodies to provide shade and regulate water temperature."
+}
+
+
 def preprocess_data(data):
     # Clean up column names and convert necessary columns to numeric
     data.columns = [col.strip().lower().replace(' ', '_').replace('.', '').replace('(', '').replace(')', '') for col in data.columns]
@@ -20,7 +35,6 @@ def load_default_data(file_path):
 
 
 def show_analysis(data, station_code1, station_code2):
-    # Show comparison analysis between two selected stations
     st.subheader(f"Comparison Between Station {station_code1} and {station_code2}")
 
     station1_data = data[data['station_code'] == station_code1]
@@ -30,17 +44,49 @@ def show_analysis(data, station_code1, station_code2):
         st.error("Data for one or both stations is missing.")
         return
 
+    # Extract parameter values
+    station1_values = {
+        'temp': station1_data['temp'].values[0],
+        'do_mg_l': station1_data['do_mg_l'].values[0],
+        'ph': station1_data['ph'].values[0]
+    }
+    station2_values = {
+        'temp': station2_data['temp'].values[0],
+        'do_mg_l': station2_data['do_mg_l'].values[0],
+        'ph': station2_data['ph'].values[0]
+    }
+
     comparison_data = pd.DataFrame({
         'Parameter': ['Temperature', 'D.O. (mg/l)', 'PH'],
-        f'Station {station_code1}': [station1_data['temp'].values[0],
-                                     station1_data['do_mg_l'].values[0],
-                                     station1_data['ph'].values[0]],
-        f'Station {station_code2}': [station2_data['temp'].values[0],
-                                     station2_data['do_mg_l'].values[0],
-                                     station2_data['ph'].values[0]]
+        f'Station {station_code1}': [station1_values['temp'], station1_values['do_mg_l'], station1_values['ph']],
+        f'Station {station_code2}': [station2_values['temp'], station2_values['do_mg_l'], station2_values['ph']]
     })
 
     st.table(comparison_data)
+
+    # Flag to check if any imbalances are found
+    imbalance_found = False
+
+    # Check for imbalances and provide tips
+    for parameter, (low, high) in ACCEPTABLE_RANGES.items():
+        station1_value = station1_values[parameter]
+        station2_value = station2_values[parameter]
+
+        # Check for station 1
+        if not (low <= station1_value <= high):
+            st.warning(f"Station {station_code1} has an imbalanced {parameter.upper()}: {station1_value}.")
+            st.info(f"Tip to improve {parameter.upper()}: {IMPROVEMENT_TIPS[parameter]}")
+            imbalance_found = True
+
+        # Check for station 2
+        if not (low <= station2_value <= high):
+            st.warning(f"Station {station_code2} has an imbalanced {parameter.upper()}: {station2_value}.")
+            st.info(f"Tip to improve {parameter.upper()}: {IMPROVEMENT_TIPS[parameter]}")
+            imbalance_found = True
+
+    # If no imbalances are found, display a message
+    if not imbalance_found:
+        st.success("All parameters for both stations are within acceptable ranges.")
 
     # Line chart comparison
     fig = px.line(comparison_data, x='Parameter', y=[f'Station {station_code1}', f'Station {station_code2}'],

@@ -3,6 +3,15 @@ import pandas as pd
 import plotly.graph_objs as go
 
 
+THRESHOLDS = {
+    'Community Compost Pits': {'assets_per_household': 1/100, 'tip': 'Increase the number of compost pits to at least 1 per 100 households.'},
+    'Community Bio-Gas Plants': {'assets_per_household': 1/200, 'tip': 'Ensure at least 1 bio-gas plant for every 200 households to manage organic waste.'},
+    'Vehicles for Collection & Transportation of Waste': {'assets_per_household': 1/500, 'tip': 'Increase the number of waste collection vehicles to at least 1 per 500 households.'},
+    'Segregation Bins at Community Places': {'assets_per_household': 1/50, 'tip': 'Place more segregation bins, aiming for at least 1 bin per 50 households.'},
+    'Waste Collection and Segregation Sheds': {'assets_per_household': 1/1000, 'tip': 'Increase the number of segregation sheds to at least 1 per 1000 households.'}
+}
+
+
 def add_sidebar_info_waste_management():
     st.sidebar.header("Additional Information on Waste Management", divider="blue")
     st.sidebar.write("""
@@ -48,13 +57,27 @@ def add_sidebar_info_waste_management():
     """)
 
 
+def check_and_suggest_improvements(metric, city_name, asset_count, household_count):
+    """Check if the asset per household ratio is below the threshold and suggest improvements if needed."""
+    threshold = THRESHOLDS[metric]['assets_per_household']
+    tip = THRESHOLDS[metric]['tip']
+
+    # Calculate assets per household
+    assets_per_household = asset_count / household_count if household_count else 0
+
+    # Check if assets are below threshold
+    if assets_per_household < threshold:
+        st.warning(f"{metric} for {city_name} is below acceptable levels.")
+        st.info(f"Tip: {tip}")
+
+
+
 def waste_management():
     # Load the dataset
     data = pd.read_csv("C:/Users/Ajeet/Downloads/swaachbharat.csv")
 
     # Streamlit application
     st.header("Waste Management Data Analysis", divider="blue")
-
     add_sidebar_info_waste_management()
 
     # City selection - converting city names to uppercase
@@ -111,6 +134,21 @@ def waste_management():
 
         # Display the comparison data
         st.write(comparison_data)
+
+        # Check for improvements needed
+        for metric in THRESHOLDS:
+            check_and_suggest_improvements(
+                metric,
+                city1,
+                comparison_data[f'{city1} - No. of Assets'][metric],
+                comparison_data[f'{city1} - Households Covered'][metric]
+            )
+            check_and_suggest_improvements(
+                metric,
+                city2,
+                comparison_data[f'{city2} - No. of Assets'][metric],
+                comparison_data[f'{city2} - Households Covered'][metric]
+            )
 
         # Plotting with Plotly
         fig = go.Figure()

@@ -2,13 +2,15 @@ import streamlit as st
 from prediction import run as run_prediction
 from prediction_oneDNN import prediction_oneDNN  # Import the oneDNN prediction function
 from water_analysis import main
+from chatbot import chatbot_ui
 from waste_management import waste_management
 
 st.title("Team Gradient")
 st.write("Select a task to perform:")
 
+
 # Task selection
-task = st.selectbox("Choose a task:", ["Cleanliness Score Prediction", "Cleanliness Score Factors"])
+task = st.selectbox("Choose a task:", ["Cleanliness Score Prediction", "Cleanliness Score Factors", "Chatbot 🤖"])
 
 if task == "Cleanliness Score Prediction":
     st.subheader("Prediction using Data libraries.", divider="blue")
@@ -35,3 +37,7 @@ elif task == "Cleanliness Score Factors":
         main()
     elif quality_analysis == "Waste Management Analysis":
         waste_management()
+
+elif task == "Chatbot 🤖":
+    chatbot_ui()
+

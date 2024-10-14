@@ -73,6 +73,41 @@ COMPONENT_DESCRIPTIONS = {
 }
 
 
+COMPONENT_THRESHOLDS = {
+    'co': 10350,  # Carbon Monoxide (μg/m³) for 9 ppm (8-hour average)
+    'no': 150,    # Nitric Oxide (μg/m³)
+    'no2': 200,   # Nitrogen Dioxide (μg/m³) 1-hour average
+    'o3': 100,    # Ozone (μg/m³) 8-hour average
+    'so2': 20,    # Sulfur Dioxide (μg/m³) 24-hour average
+    'pm2_5': 25,  # Particulate Matter PM2.5 (μg/m³) 24-hour average
+    'pm10': 50,   # Particulate Matter PM10 (μg/m³) 24-hour average
+    'nh3': 200    # Ammonia (μg/m³)
+}
+
+
+def display_air_quality_tips(components, city):
+    tips = []
+
+    for key, value in components.items():
+        if key in COMPONENT_THRESHOLDS:
+            threshold = COMPONENT_THRESHOLDS[key]
+            if value > threshold:
+                tips.append(
+                    f"{COMPONENT_DESCRIPTIONS.get(key, key.title())} ({key}): {value} µg/m³ exceeds the safe level of {threshold} µg/m³.")
+
+    if tips:
+        st.subheader(f"Chemical analysis for {city}")
+        for tip in tips:
+            st.write(tip)
+        st.write(
+            "Consider reducing emissions by using public transport, promoting electric vehicles, "
+            "using clean energy, and improving waste management. Planting more trees and using energy-efficient "
+            "appliances can also help improve air quality."
+        )
+    else:
+        st.write(f"Air quality components for {city} are within safe limits.")
+
+
 # Function to fetch air quality data from the OpenWeatherMap API
 def get_air_quality(lat, lon):
     url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={AIR_QUALITY_API_KEY}"
@@ -232,6 +267,7 @@ def run():
             aqi1, components1 = get_air_quality(lat1, lon1)
             aqi2, components2 = get_air_quality(lat2, lon2)
 
+
             progress_bar.progress(40, text="Scaling data...")
 
             # Step 3: Scale the city data
@@ -265,11 +301,37 @@ def run():
             # Step 5: Display results
             st.success(f"{city1} Prediction: {mean_pred1:.2f} (95% CI: {lower_bound1:.2f} - {upper_bound1:.2f})")
             st.success(f"{city2} Prediction: {mean_pred2:.2f} (95% CI: {lower_bound2:.2f} - {upper_bound2:.2f})")
-            st.write(f"Model Accuracy City 1: {accuracy1:.2f}")
-            st.write(f"Model Accuracy City 2: {accuracy2:.2f}")
-            st.write(f"AQI City 1: {aqi1} ({aqi_category1})")
-            st.write(f"AQI City 2: {aqi2} ({aqi_category2})")
+            st.write(f"Model Accuracy for {city1}: {accuracy1:.2f}")
+            st.write(f"Model Accuracy {city2}: {accuracy2:.2f}")
 
+            if(aqi1>3):
+                st.error(f"AQI of {city1}: {aqi1} ({aqi_category1})")
+                st.subheader(f"Tips for Improving Air Quality Index (AQI) in {city1}")
+                st.markdown("""
+                    - **Reduce emissions from vehicles and industries** by promoting electric vehicles, public transport, and cleaner energy sources like solar and wind.
+                    - **Implement stricter industrial emission regulations**, prevent crop residue burning, and improve waste management.
+                    - **Expand urban greenery** and use energy-efficient appliances.
+                    - **Adopt clean cooking technologies** to reduce indoor air pollution.
+                    - **Promote public awareness campaigns**, government policies, and economic incentives such as carbon pricing and subsidies for clean energy.
+                    - **Encourage sustainable practices, innovation, and international cooperation** to reduce air pollution and create a healthier environment for future generations.
+                    """)
+            else:
+                st.success(f"AQI of {city1} is {aqi1} ({aqi_category1}) and its not harmful")
+
+
+            if (aqi2 > 3):
+                st.error(f"AQI of {city2}: {aqi2} ({aqi_category2})")
+                st.subheader(f"Tips for Improving Air Quality Index (AQI) in {city2}")
+                st.markdown("""
+                    - **Reduce emissions from vehicles and industries** by promoting electric vehicles, public transport, and cleaner energy sources like solar and wind.
+                    - **Implement stricter industrial emission regulations**, prevent crop residue burning, and improve waste management.
+                    - **Expand urban greenery** and use energy-efficient appliances.
+                    - **Adopt clean cooking technologies** to reduce indoor air pollution.
+                    - **Promote public awareness campaigns**, government policies, and economic incentives such as carbon pricing and subsidies for clean energy.
+                    - **Encourage sustainable practices, innovation, and international cooperation** to reduce air pollution and create a healthier environment for future generations.
+                    """)
+            else:
+                st.success(f"AQI of {city2} is {aqi2} ({aqi_category2}) and its not harmful")
             progress_bar.progress(100, text="Prediction complete.")
             time.sleep(0.5)
 
@@ -298,6 +360,9 @@ def run():
             st.write(f"Air Quality Components for {city2}:")
             st.dataframe(components2_df.rename(
                 index={key: f"{COMPONENT_DESCRIPTIONS.get(key, key.title())} ({key})" for key in components2_df.index}))
+
+            display_air_quality_tips(components1, city1)
+            display_air_quality_tips(components2, city2)
 
 
 # Run the app
