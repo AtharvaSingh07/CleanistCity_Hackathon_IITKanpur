@@ -99,13 +99,13 @@ def display_air_quality_tips(components, city):
         st.subheader(f"Chemical analysis for {city}")
         for tip in tips:
             st.write(tip)
-        st.write(
+        st.info(
             "Consider reducing emissions by using public transport, promoting electric vehicles, "
             "using clean energy, and improving waste management. Planting more trees and using energy-efficient "
             "appliances can also help improve air quality."
         )
     else:
-        st.write(f"Air quality components for {city} are within safe limits.")
+        st.success(f"Air quality components for {city} are within safe limits.")
 
 
 # Function to fetch air quality data from the OpenWeatherMap API
