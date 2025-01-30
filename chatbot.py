@@ -133,8 +133,6 @@ def chatbot_ui():
             - You can ask for scores from the years 2016, 2017, 2018, 2019, 2020, 2022, and 2023 (note: 2021 data is not available).
         """)
 
-
-
     st.title("Cleanliness Score Chatbot")
     st.header("Welcome to the Cleanliness Score Chatbot!")
 
