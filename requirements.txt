@@ -5,3 +5,4 @@ pandas
 tensorflow
 xgboost
 scikit-learn-intelex
+en_core_web_sm
