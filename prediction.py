@@ -15,7 +15,7 @@ from sklearnex import patch_sklearn
 patch_sklearn()
 
 # Load the dataset
-data = pd.read_csv(r"C:\Users\Ajeet\PycharmProjects\CleanistCity_Hackathon_IITKanpur\Cleanest_Cities_India.csv")
+data = pd.read_csv(r"C:/Users/Ajeet/PycharmProjects/CleanistCity_Hackathon_IITKanpur/Cleanest_Cities_India.csv")
 
 # API key for air quality
 AIR_QUALITY_API_KEY = "2f667cec17cadcd56a29ea625750ae2c"
