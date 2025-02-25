@@ -64,7 +64,7 @@ def add_sidebar_info():
 
 def prediction_oneDNN():
     # Load dataset
-    data = pd.read_csv(r"C:/Users/Ajeet/BuzzEarthHack/Cleanest Cities Prediction/Cleanest_Cities_India.csv")
+    data = pd.read_csv("Cleanest_Cities_India.csv")
 
     st.header("Prediction using oneDNN", divider="blue")
 
