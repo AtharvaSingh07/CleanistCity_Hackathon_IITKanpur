@@ -74,7 +74,7 @@ def check_and_suggest_improvements(metric, city_name, asset_count, household_cou
 
 def waste_management():
     # Load the dataset
-    data = pd.read_csv("C:/Users/Ajeet/PycharmProjects/CleanistCity_Hackathon_IITKanpur/swaachbharat.csv")
+    data = pd.read_csv(r"C:/Users/Ajeet/PycharmProjects/CleanistCity_Hackathon_IITKanpur/swaachbharat.csv")
 
     # Streamlit application
     st.header("Waste Management Data Analysis", divider="blue")
