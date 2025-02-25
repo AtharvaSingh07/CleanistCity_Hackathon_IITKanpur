@@ -6,7 +6,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 # Load your cleanliness dataset (Make sure to use the correct path)
-cleanliness_data = pd.read_csv("C:/Users/Ajeet/Downloads/archive (4)/Cleanest_Cities_India.csv")
+cleanliness_data = pd.read_csv("Cleanest_Cities_India.csv")
 
 # List of known cities (for validation)
 known_cities = cleanliness_data['City Name'].str.upper().tolist()
