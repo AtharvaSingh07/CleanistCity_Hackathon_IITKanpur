@@ -4,3 +4,4 @@ spacy
 pandas
 tensorflow
 xgboost
+scikit-learn-intelex
