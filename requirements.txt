@@ -1,1 +1,6 @@
 scikit-learn
+plotly
+spacy
+pandas
+tensorflow
+xgboost
