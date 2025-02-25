@@ -205,7 +205,7 @@ def main():
     add_sidebar_info_water_quality()
 
     # Specify the path to the default CSV file
-    default_file_path = r"C:\Users\Ajeet\Downloads\archive (4)\water_dataX.csv"
+    default_file_path = r"C:\Users\Ajeet\PycharmProjects\CleanistCity_Hackathon_IITKanpur\water_dataX.csv"
 
     if os.path.exists(default_file_path):
         data = load_default_data(default_file_path)
